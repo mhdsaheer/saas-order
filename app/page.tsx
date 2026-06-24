@@ -35,7 +35,8 @@ import {
   Volume2,
   Smile,
   Headphones,
-  ShieldCheck
+  ShieldCheck,
+  Menu
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -162,6 +163,7 @@ function CountUp({ value, duration = 2000 }: { value: string; duration?: number 
 export default function Page() {
   // Navigation State
   const [activeNavItem, setActiveNavItem] = useState('Home')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   // Search State in the Dashboard Mockup
   const [searchQuery, setSearchQuery] = useState('')
@@ -460,7 +462,7 @@ export default function Page() {
     <main className="min-h-screen bg-white text-slate-900 overflow-x-hidden font-sans">
 
       {/* 1. Header Section */}
-      <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/90 backdrop-blur-md transition-all">
+      <header className="sticky top-0 z-[999] border-b border-slate-100 bg-white/90 backdrop-blur-md transition-all">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
 
@@ -508,13 +510,54 @@ export default function Page() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </button>
+
+              {/* Mobile/Tablet Menu Button */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="xl:hidden flex items-center justify-center w-10 h-10 rounded-full border border-slate-200 text-slate-600 hover:text-[#f41b5d] hover:border-[#f41b5d]/30 hover:bg-[#f41b5d]/[0.03] transition-all cursor-pointer"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
             </div>
           </div>
         </div>
       </header>
 
+      {/* Mobile Navigation Drawer */}
+      {mobileMenuOpen && (
+        <div className="xl:hidden fixed inset-x-0 top-20 bottom-0 z-[1000] bg-white border-t border-slate-100 flex flex-col p-6 animate-fadeIn overflow-y-auto">
+          <nav className="flex flex-col gap-4">
+            {['Home', 'Platform', 'Catalog', 'Customers', 'Partners', 'Pricing', 'News', 'Contact Us'].map((item) => (
+              <button
+                key={item}
+                onClick={() => {
+                  setActiveNavItem(item)
+                  setMobileMenuOpen(false)
+                }}
+                className={`text-left text-lg font-bold py-3 border-b border-slate-50 transition-colors cursor-pointer ${activeNavItem === item ? 'text-[#f41b5d]' : 'text-slate-600 hover:text-[#f41b5d]'
+                  }`}
+              >
+                {item}
+              </button>
+            ))}
+          </nav>
+          <div className="mt-8">
+            <button
+              onClick={() => {
+                setIsDemoModalOpen(true)
+                setMobileMenuOpen(false)
+              }}
+              className="flex items-center justify-center gap-2 bg-[#f41b5d] hover:bg-[#d0144d] text-white text-sm font-bold py-4 px-6 rounded-full shadow-lg shadow-[#f41b5d]/20 w-full transition-all cursor-pointer"
+            >
+              Launch Your Market Place
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* 2. Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-slate-50/50 via-white to-white py-16 md:py-24">
+      <section className="relative overflow-hidden bg-gradient-to-b from-slate-50/50 via-white to-white py-16 md:py-19">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-12 lg:grid-cols-12 items-center">
 
@@ -536,10 +579,10 @@ export default function Page() {
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-wrap gap-4 pt-2">
+              <div className="flex flex-col sm:flex-row gap-4 pt-2 w-full sm:w-auto">
                 <button
                   onClick={() => setIsDemoModalOpen(true)}
-                  className="flex items-center gap-2 bg-[#f41b5d] hover:bg-[#d0144d] text-white py-4 px-8 rounded-lg font-bold shadow-lg shadow-[#f41b5d]/15 hover:shadow-[#f41b5d]/25 hover:-translate-y-0.5 transition-all cursor-pointer"
+                  className="flex items-center justify-center gap-2 bg-[#f41b5d] hover:bg-[#d0144d] text-white py-4 px-8 rounded-lg font-bold shadow-lg shadow-[#f41b5d]/15 hover:shadow-[#f41b5d]/25 hover:-translate-y-0.5 transition-all cursor-pointer w-full sm:w-auto"
                 >
                   Book a Demo
                   <ArrowRight className="w-4 h-4" />
@@ -547,7 +590,7 @@ export default function Page() {
 
                 <button
                   onClick={() => setActiveNavItem('Catalog')}
-                  className="flex items-center gap-2 bg-white border border-slate-200 text-[#f41b5d] hover:border-[#f41b5d]/30 hover:bg-[#f41b5d]/[0.02] py-4 px-8 rounded-lg font-bold hover:-translate-y-0.5 transition-all cursor-pointer"
+                  className="flex items-center justify-center gap-2 bg-white border border-slate-200 text-[#f41b5d] hover:border-[#f41b5d]/30 hover:bg-[#f41b5d]/[0.02] py-4 px-8 rounded-lg font-bold hover:-translate-y-0.5 transition-all cursor-pointer w-full sm:w-auto"
                 >
                   Explore Catalog
                   <ArrowRight className="w-4 h-4 text-[#f41b5d]" />
@@ -555,32 +598,32 @@ export default function Page() {
               </div>
 
               {/* Horizontal Stats Row */}
-              <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-10 border-t border-slate-100">
-                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 p-3 bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:border-[#f41b5d]/20 hover:shadow-md transition-all duration-300">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 pt-10 border-t border-slate-100">
+                <div className="flex flex-row items-center gap-3 p-3 bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:border-[#f41b5d]/20 hover:shadow-md transition-all duration-300">
                   <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-pink-50 border border-pink-100 text-[#f41b5d] shrink-0">
                     <ShoppingCart className="w-4 h-4" />
                   </div>
-                  <div className="text-center sm:text-left">
+                  <div className="text-left">
                     <p className="text-sm sm:text-base font-extrabold text-slate-800 leading-tight">+250</p>
                     <p className="text-[10px] sm:text-xs font-semibold text-slate-500">Vendors</p>
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 p-3 bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:border-[#f41b5d]/20 hover:shadow-md transition-all duration-300">
+                <div className="flex flex-row items-center gap-3 p-3 bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:border-[#f41b5d]/20 hover:shadow-md transition-all duration-300">
                   <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-pink-50 border border-pink-100 text-[#f41b5d] shrink-0">
                     <Layers className="w-4 h-4" />
                   </div>
-                  <div className="text-center sm:text-left">
+                  <div className="text-left">
                     <p className="text-sm sm:text-base font-extrabold text-slate-800 leading-tight">+5000</p>
                     <p className="text-[10px] sm:text-xs font-semibold text-slate-500">Products</p>
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 p-3 bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:border-[#f41b5d]/20 hover:shadow-md transition-all duration-300">
+                <div className="flex flex-row items-center gap-3 p-3 bg-slate-50 border border-slate-100 rounded-xl hover:bg-white hover:border-[#f41b5d]/20 hover:shadow-md transition-all duration-300">
                   <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-pink-50 border border-pink-100 text-[#f41b5d] shrink-0">
                     <Building className="w-4 h-4" />
                   </div>
-                  <div className="text-center sm:text-left">
+                  <div className="text-left">
                     <p className="text-sm sm:text-base font-extrabold text-slate-800 leading-tight">+100</p>
                     <p className="text-[10px] sm:text-xs font-semibold text-slate-500">Clients</p>
                   </div>
@@ -645,16 +688,16 @@ export default function Page() {
                 <div className="flex-1 bg-white flex flex-col p-5 overflow-y-auto">
 
                   {/* Mockup Header */}
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <div className="flex flex-col min-[450px]:flex-row min-[450px]:items-center justify-between gap-2 border-b border-slate-100 pb-3">
                     <div className="flex items-center gap-1.5">
-                      <h3 className="text-sm font-bold text-slate-800">Welcome back, Admin</h3>
+                      <h3 className="text-xs min-[450px]:text-sm font-bold text-slate-800">Welcome back, Admin</h3>
                       <span>👋</span>
                     </div>
-                    <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200/80 rounded-full py-1 px-3 shadow-sm hover:bg-slate-100 transition-colors cursor-pointer">
-                      <div className="w-3.5 h-3.5 rounded-sm bg-blue-500 flex items-center justify-center shrink-0">
-                        <span className="text-[7px] text-white font-bold font-sans">M</span>
+                    <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200/80 rounded-full py-1 px-2.5 shadow-sm hover:bg-slate-100 transition-colors cursor-pointer self-start min-[450px]:self-auto">
+                      <div className="w-3 h-3 rounded-sm bg-blue-500 flex items-center justify-center shrink-0">
+                        <span className="text-[6px] text-white font-bold font-sans">M</span>
                       </div>
-                      <span className="text-[10px] font-bold text-slate-600">Microsoft 365</span>
+                      <span className="text-[9px] font-bold text-slate-600">Microsoft 365</span>
                     </div>
                   </div>
 
@@ -665,7 +708,7 @@ export default function Page() {
                       <Search className="w-4 h-4 text-slate-400 mr-2 shrink-0" />
                       <input
                         type="text"
-                        placeholder="Search for products, vendors or categories..."
+                        placeholder="Search products..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onFocus={() => setSearchFocused(true)}
@@ -679,7 +722,7 @@ export default function Page() {
                   </div>
 
                   {/* Mockup Grid Stats */}
-                  <div className="grid grid-cols-4 gap-2 mt-4">
+                  <div className="grid grid-cols-2 min-[450px]:grid-cols-4 gap-2 mt-4">
                     {[
                       { label: 'Vendors', value: '250+', color: 'border-emerald-100 bg-emerald-50/30' },
                       { label: 'Products', value: '5000+', color: 'border-blue-100 bg-blue-50/30' },
@@ -703,7 +746,7 @@ export default function Page() {
                       </button>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 min-[450px]:grid-cols-3 gap-2">
                       {filteredCategories.slice(0, 6).map((cat, idx) => {
                         const IconComp = cat.icon
                         return (
@@ -722,7 +765,7 @@ export default function Page() {
                         )
                       })}
                       {filteredCategories.length === 0 && (
-                        <p className="text-[10px] text-slate-400 col-span-3 text-center py-2">No matching categories</p>
+                        <p className="text-[10px] text-slate-400 col-span-2 text-center py-2">No matching categories</p>
                       )}
                     </div>
                   </div>
@@ -737,7 +780,7 @@ export default function Page() {
                       </button>
                     </div>
 
-                    <div className="flex items-center justify-between gap-2 p-2 border border-slate-100 rounded-lg bg-slate-50/30">
+                    <div className="flex flex-wrap items-center justify-center min-[400px]:justify-between gap-1.5 p-2 border border-slate-100 rounded-lg bg-slate-50/30">
                       {['Microsoft', 'AWS', 'Google', 'Adobe', 'Zoho', 'Cisco'].map((vendor, idx) => (
                         <div
                           key={idx}
@@ -774,7 +817,7 @@ export default function Page() {
                 WebkitMaskImage: 'linear-gradient(to right, transparent, white 15%, white 85%, transparent)'
               }}
             >
-              <div className="flex gap-30 animate-marquee whitespace-nowrap w-max">
+              <div className="flex gap-12 md:gap-30 animate-marquee whitespace-nowrap w-max">
                 {[
                   {
                     name: 'Microsoft',
@@ -1318,7 +1361,7 @@ export default function Page() {
 
           {/* Horizontal Tabs list */}
           <ScrollReveal delay={100}>
-            <div className="flex border-b border-slate-200 overflow-x-auto justify-center no-scrollbar">
+            <div className="flex border-b border-slate-200 overflow-x-auto lg:justify-center no-scrollbar">
               <div className="flex space-x-8 px-4">
                 {Object.keys(tabsData).map((tabName) => (
                   <button
@@ -1476,7 +1519,7 @@ export default function Page() {
               return (
                 <ScrollReveal key={idx} delay={idx * 120} className="h-full">
                   <div className={`group relative bg-white border border-slate-100 rounded-3xl p-8 flex flex-col items-center justify-between text-center transition-all duration-500 hover:-translate-y-2 h-full overflow-hidden ${badge.shadowHoverStyles}`}>
-                    
+
                     {/* Top gradient highlight strip (fades in on hover) */}
                     <div className={`absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r ${badge.accentGrad} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
 
@@ -1614,8 +1657,8 @@ export default function Page() {
       <section className="py-16 md:py-24 bg-white relative overflow-hidden">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
           <ScrollReveal>
-            <div className="bg-white border border-slate-100/80 rounded-3xl p-10 sm:p-16 lg:p-20 relative overflow-hidden shadow-[0_25px_50px_-12px_rgba(15,23,42,0.04)]">
-              
+            <div className="bg-white border border-slate-100/80 rounded-3xl p-6 sm:p-16 lg:p-20 relative overflow-hidden shadow-[0_25px_50px_-12px_rgba(15,23,42,0.04)]">
+
               {/* Diffused background glows */}
               <div className="absolute top-1/2 left-0 -translate-y-1/2 w-80 h-80 bg-gradient-to-br from-violet-100/40 via-purple-50/20 to-transparent rounded-full blur-3xl pointer-events-none" />
               <div className="absolute top-1/2 right-0 -translate-y-1/2 w-80 h-80 bg-gradient-to-tl from-pink-100/30 via-rose-50/15 to-transparent rounded-full blur-3xl pointer-events-none" />
@@ -1646,7 +1689,7 @@ export default function Page() {
 
               {/* Content Wrapper */}
               <div className="relative z-10 flex flex-col items-center text-center max-w-3xl mx-auto">
-                
+
                 {/* Pill Badge */}
                 <div className="inline-flex items-center gap-1.5 bg-[#f0ebff] text-[#5e43f3] text-[11px] font-bold px-4 py-2 rounded-full border border-violet-100/60 mb-6 select-none">
                   <Sparkles className="w-3.5 h-3.5 fill-[#5e43f3]/10" />
@@ -1694,10 +1737,10 @@ export default function Page() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
 
           {/* Main Footer Links */}
-          <div className="grid gap-10 md:grid-cols-6 lg:grid-cols-12 text-left">
+          <div className="grid gap-10 grid-cols-2 md:grid-cols-6 lg:grid-cols-12 text-left">
 
             {/* Logo description */}
-            <div className="md:col-span-3 lg:col-span-4 space-y-5">
+            <div className="col-span-2 md:col-span-3 lg:col-span-4 space-y-5">
               <div className="flex items-center gap-2 select-none cursor-pointer">
                 <Image
                   src="/logo_03.png"
@@ -1730,7 +1773,7 @@ export default function Page() {
             </div>
 
             {/* Column 1 - Platform */}
-            <div className="md:col-span-1.5 lg:col-span-2 space-y-4">
+            <div className="col-span-1 md:col-span-1 lg:col-span-2 space-y-4">
               <h4 className="text-slate-900 text-xs font-bold uppercase tracking-widest">Platform</h4>
               <ul className="space-y-2.5 text-xs sm:text-sm font-semibold text-slate-500">
                 <li><a href="#" className="hover:text-[#f41b5d] transition-colors">Catalog</a></li>
@@ -1741,7 +1784,7 @@ export default function Page() {
             </div>
 
             {/* Column 2 - Solutions */}
-            <div className="md:col-span-1.5 lg:col-span-2 space-y-4">
+            <div className="col-span-1 md:col-span-1 lg:col-span-2 space-y-4">
               <h4 className="text-slate-900 text-xs font-bold uppercase tracking-widest">Solutions</h4>
               <ul className="space-y-2.5 text-xs sm:text-sm font-semibold text-slate-500">
                 <li><a href="#" className="hover:text-[#f41b5d] transition-colors">Cloud</a></li>
@@ -1753,7 +1796,7 @@ export default function Page() {
             </div>
 
             {/* Column 3 - Resources */}
-            <div className="md:col-span-1.5 lg:col-span-2 space-y-4">
+            <div className="col-span-1 md:col-span-1 lg:col-span-2 space-y-4">
               <h4 className="text-slate-900 text-xs font-bold uppercase tracking-widest">Resources</h4>
               <ul className="space-y-2.5 text-xs sm:text-sm font-semibold text-slate-500">
                 <li><a href="#" className="hover:text-[#f41b5d] transition-colors">News</a></li>
@@ -1764,7 +1807,7 @@ export default function Page() {
             </div>
 
             {/* Column 4 - Company */}
-            <div className="md:col-span-1.5 lg:col-span-2 space-y-4">
+            <div className="col-span-1 md:col-span-1 lg:col-span-2 space-y-4">
               <h4 className="text-slate-900 text-xs font-bold uppercase tracking-widest">Company</h4>
               <ul className="space-y-2.5 text-xs sm:text-sm font-semibold text-slate-500">
                 <li><a href="#" className="hover:text-[#f41b5d] transition-colors">About Us</a></li>
@@ -1775,7 +1818,7 @@ export default function Page() {
             </div>
 
             {/* Newsletter Column */}
-            <div className="md:col-span-3 lg:col-span-4 space-y-4">
+            <div className="col-span-2 md:col-span-3 lg:col-span-4 space-y-4">
               <h4 className="text-slate-900 text-xs font-bold uppercase tracking-widest">Subscribe to our newsletter</h4>
               <p className="text-slate-500 text-xs leading-relaxed">
                 Be the first to get latest offers and news on our products directly in your inbox.
